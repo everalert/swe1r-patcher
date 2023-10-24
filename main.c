@@ -15,6 +15,7 @@
 #include <sys/types.h>
 
 
+#define USE_PATCHED_GUID 0
 #ifdef LOADER
 
 #include <windows.h>
@@ -421,9 +422,11 @@ static void modify_network_guid(Target target, const void* data, size_t size) {
 static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, uint8_t* upgrade_levels, uint8_t* upgrade_healths) {
   // Upgrade network play updates to 100%
 
-  //modify_network_guid(target, "Upgrades", 0);
-  //modify_network_guid(target, upgrade_levels, 7);
-  //modify_network_guid(target, upgrade_healths, 7);
+#ifdef USE_PATCHED_GUID
+  modify_network_guid(target, "Upgrades", 0);
+  modify_network_guid(target, upgrade_levels, 7);
+  modify_network_guid(target, upgrade_healths, 7);
+#endif
 
   // The following patch only supports the same upgrade level and health for menus
   // So in order to keep everything synchronized, we assert that only one setting is present for all categories
@@ -518,7 +521,9 @@ static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, ui
 static uint32_t patch_network_collisions(Target target, uint32_t memory_offset) {
   // Disable collision between network players
 
-  //modify_network_guid(target, "Collisions", 0);
+#ifdef USE_PATCHED_GUID
+  modify_network_guid(target, "Collisions", 0);
+#endif
 
   // Inject the code
 
