@@ -16,6 +16,9 @@
 
 
 #define USE_PATCHED_GUID 0
+#define USE_PATCHED_FONTS 0
+
+
 #ifdef LOADER
 
 #include <windows.h>
@@ -767,7 +770,7 @@ static void patch(Target target, uint32_t memory_offset) {
 
 // Start the actual patching
 
-#if 1
+#ifdef USE_PATCHED_FONTS
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF91C, 0x42D745, 0x42D753, 512, 1024, "font0");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF7E4, 0x42D786, 0x42D794, 512, 1024, "font1");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF84C, 0x42D7C7, 0x42D7D5, 512, 1024, "font2");
