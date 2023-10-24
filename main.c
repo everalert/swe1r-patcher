@@ -425,7 +425,7 @@ static void modify_network_guid(Target target, const void* data, size_t size) {
 static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, uint8_t* upgrade_levels, uint8_t* upgrade_healths) {
   // Upgrade network play updates to 100%
 
-#ifdef USE_PATCHED_GUID
+#if USE_PATCHED_GUID
   modify_network_guid(target, "Upgrades", 0);
   modify_network_guid(target, upgrade_levels, 7);
   modify_network_guid(target, upgrade_healths, 7);
@@ -524,7 +524,7 @@ static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, ui
 static uint32_t patch_network_collisions(Target target, uint32_t memory_offset) {
   // Disable collision between network players
 
-#ifdef USE_PATCHED_GUID
+#if USE_PATCHED_GUID
   modify_network_guid(target, "Collisions", 0);
 #endif
 
@@ -770,7 +770,7 @@ static void patch(Target target, uint32_t memory_offset) {
 
 // Start the actual patching
 
-#ifdef USE_PATCHED_FONTS
+#if USE_PATCHED_FONTS
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF91C, 0x42D745, 0x42D753, 512, 1024, "font0");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF7E4, 0x42D786, 0x42D794, 512, 1024, "font1");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF84C, 0x42D7C7, 0x42D7D5, 512, 1024, "font2");
