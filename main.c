@@ -17,6 +17,7 @@
 
 #define USE_PATCHED_GUID 0
 #define USE_PATCHED_FONTS 0
+#define USE_TRIGGER_DISPLAY 0
 
 
 #ifdef LOADER
@@ -801,7 +802,7 @@ static void patch(Target target, uint32_t memory_offset) {
   memory_offset = patch_sprite_loader_to_load_tga(target, memory_offset);
 #endif
 
-#if 0
+#if USE_TRIGGER_DISPLAY
   memory_offset = patch_trigger_display(target, memory_offset);
 #endif
 
