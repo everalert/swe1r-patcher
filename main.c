@@ -16,7 +16,7 @@
 
 
 #define USE_PATCHED_GUID 0
-#define USE_PATCHED_FONTS 0
+#define USE_PATCHED_FONTS 1
 #define USE_TRIGGER_DISPLAY 0
 
 
