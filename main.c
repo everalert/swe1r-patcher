@@ -15,6 +15,12 @@
 #include <sys/types.h>
 
 
+#define USE_PATCHED_GUID 0
+#define USE_PATCHED_FONTS 1
+#define USE_TRIGGER_DISPLAY 0
+#define USE_R100 1
+
+
 #ifdef LOADER
 
 #include <windows.h>
@@ -421,16 +427,21 @@ static void modify_network_guid(Target target, const void* data, size_t size) {
 static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, uint8_t* upgrade_levels, uint8_t* upgrade_healths) {
   // Upgrade network play updates to 100%
 
+#if USE_PATCHED_GUID
   modify_network_guid(target, "Upgrades", 0);
   modify_network_guid(target, upgrade_levels, 7);
   modify_network_guid(target, upgrade_healths, 7);
+#endif
 
+#if 0
+  // what the hell is the point of this shit, jay
   // The following patch only supports the same upgrade level and health for menus
   // So in order to keep everything synchronized, we assert that only one setting is present for all categories
   for(int i = 0; i < 7; i++) {
     assert(upgrade_levels[i] == upgrade_levels[0]);
     assert(upgrade_healths[i] == upgrade_healths[0]);
   }
+#endif
 
   // Now do the actual upgrade for menus
   write8(target, 0x45CFC6, upgrade_levels[0]);
@@ -518,7 +529,9 @@ static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, ui
 static uint32_t patch_network_collisions(Target target, uint32_t memory_offset) {
   // Disable collision between network players
 
+#if USE_PATCHED_GUID
   modify_network_guid(target, "Collisions", 0);
+#endif
 
   // Inject the code
 
@@ -762,7 +775,7 @@ static void patch(Target target, uint32_t memory_offset) {
 
 // Start the actual patching
 
-#if 1
+#if USE_PATCHED_FONTS
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF91C, 0x42D745, 0x42D753, 512, 1024, "font0");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF7E4, 0x42D786, 0x42D794, 512, 1024, "font1");
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF84C, 0x42D7C7, 0x42D7D5, 512, 1024, "font2");
@@ -770,12 +783,13 @@ static void patch(Target target, uint32_t memory_offset) {
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF984, 0x42D849, 0x42D857, 512, 1024, "font4");
 #endif
 
-#if 1
-  uint8_t upgrade_levels[7]  = {    5,    5,    5,    5,    5,    5,    5 };
-  uint8_t upgrade_healths[7] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
-  memory_offset = patch_network_upgrades(target, memory_offset, upgrade_levels, upgrade_healths);
+#if USE_R100
+	uint8_t upgrade_levels[7]  = {    3,    5,    5,    5,    5,    5,    5 };
+#else
+	uint8_t upgrade_levels[7]  = {    5,    5,    5,    5,    5,    5,    5 };
 #endif
+	uint8_t upgrade_healths[7] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+	memory_offset = patch_network_upgrades(target, memory_offset, upgrade_levels, upgrade_healths);
 
 #if 1
   memory_offset = patch_network_collisions(target, memory_offset);
@@ -793,7 +807,7 @@ static void patch(Target target, uint32_t memory_offset) {
   memory_offset = patch_sprite_loader_to_load_tga(target, memory_offset);
 #endif
 
-#if 0
+#if USE_TRIGGER_DISPLAY
   memory_offset = patch_trigger_display(target, memory_offset);
 #endif
 
