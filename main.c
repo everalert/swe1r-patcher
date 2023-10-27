@@ -18,6 +18,7 @@
 #define USE_PATCHED_GUID 0
 #define USE_PATCHED_FONTS 1
 #define USE_TRIGGER_DISPLAY 0
+#define USE_R100 1
 
 
 #ifdef LOADER
@@ -432,12 +433,15 @@ static uint32_t patch_network_upgrades(Target target, uint32_t memory_offset, ui
   modify_network_guid(target, upgrade_healths, 7);
 #endif
 
+#if 0
+  // what the hell is the point of this shit, jay
   // The following patch only supports the same upgrade level and health for menus
   // So in order to keep everything synchronized, we assert that only one setting is present for all categories
   for(int i = 0; i < 7; i++) {
     assert(upgrade_levels[i] == upgrade_levels[0]);
     assert(upgrade_healths[i] == upgrade_healths[0]);
   }
+#endif
 
   // Now do the actual upgrade for menus
   write8(target, 0x45CFC6, upgrade_levels[0]);
@@ -779,12 +783,13 @@ static void patch(Target target, uint32_t memory_offset) {
   memory_offset = patchTextureTable(target, memory_offset, 0x4BF984, 0x42D849, 0x42D857, 512, 1024, "font4");
 #endif
 
-#if 1
-  uint8_t upgrade_levels[7]  = {    5,    5,    5,    5,    5,    5,    5 };
-  uint8_t upgrade_healths[7] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
-  memory_offset = patch_network_upgrades(target, memory_offset, upgrade_levels, upgrade_healths);
+#if USE_R100
+	uint8_t upgrade_levels[7]  = {    3,    5,    5,    5,    5,    5,    5 };
+#else
+	uint8_t upgrade_levels[7]  = {    5,    5,    5,    5,    5,    5,    5 };
 #endif
+	uint8_t upgrade_healths[7] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+	memory_offset = patch_network_upgrades(target, memory_offset, upgrade_levels, upgrade_healths);
 
 #if 1
   memory_offset = patch_network_collisions(target, memory_offset);
